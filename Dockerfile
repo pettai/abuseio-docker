@@ -1,7 +1,7 @@
 # Multistage Dockerfile for AbuseIO latest
 
 # create an intermediate image
-FROM ubuntu:16.04 as intermediate
+FROM ubuntu:18.04 as intermediate
 
 ARG GITHUB_TOKEN
 
@@ -14,17 +14,27 @@ RUN if [ "x${GITHUB_TOKEN}" = "x" ]; then \
     fi
 
 RUN apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install curl php php-pear php-dev php-mcrypt php-mysql php-pgsql php-curl \
-    php-intl php-bcmath php-cli php-cgi php-mbstring php-zip unzip wget -y
+    DEBIAN_FRONTEND=noninteractive apt-get install -y gcc make autoconf libc-dev \
+    pkg-config php-cli php-curl php-mysql \
+    php-pear php-pgsql php-intl php-bcmath php-mbstring php-zip php-dev \
+    libmcrypt-dev git re2c unzip wget curl
+
+
+# install php-mcrypt
+RUN pecl install mcrypt-1.0.1
+RUN echo "extension=mcrypt.so" > /etc/php/7.2/mods-available/mcrypt.ini
+
+# install php-mail-mimedecode
+RUN pear install Mail_mimeDecode
 
 # tweak mbstring
-RUN cp /usr/include/php/20151012/ext/mbstring/libmbfl/mbfl/mbfilter.h . && \
+RUN cp /usr/include/php/20170718/ext/mbstring/libmbfl/mbfl/mbfilter.h . && \
     awk '/#define MBFL_MBFILTER_H/{print;print "#undef HAVE_MBSTRING\n#define HAVE_MBSTRING 1";next}1' \
-    mbfilter.h > /usr/include/php/20151012/ext/mbstring/libmbfl/mbfl/mbfilter.h
+    mbfilter.h > /usr/include/php/20170718/ext/mbstring/libmbfl/mbfl/mbfilter.h
 
 # install mailparse
-RUN pecl install mailparse-3.0.2 && \
-    echo extension=mailparse.so > /etc/php/7.0/mods-available/mailparse.ini && \
+RUN pecl install mailparse && \
+    echo extension=mailparse.so > /etc/php/7.2/mods-available/mailparse.ini && \
     phpenmod mailparse && phpenmod mcrypt
 
 # install composer
@@ -36,20 +46,20 @@ RUN curl -sS https://getcomposer.org/installer | php && \
 RUN composer config -g github-oauth.github.com ${GITHUB_TOKEN}
 
 # get AbuseIO
-RUN wget -O abuseio.zip https://github.com/AbuseIO/AbuseIO/archive/master.zip && \
+RUN wget -O abuseio.zip https://github.com/AbuseIO/AbuseIO/archive/laravel5_6.zip && \
     unzip abuseio.zip -d /tmp
 
 # install dependencies
-WORKDIR /tmp/AbuseIO-master
+WORKDIR /tmp/AbuseIO-laravel5_6
 RUN composer install --no-scripts
 
 # create the final image
-FROM ubuntu:16.04
+FROM ubuntu:18.04
 
-LABEL description="Docker image for AbuseIO, this image will install the latest version of AbuseIO 4.1" \
+LABEL description="Docker image for AbuseIO, this image will install the alpha version of AbuseIO 4.1 running on laravel 5.6" \
       vendor="AbuseIO" \
       product="AbuseIO" \
-      version="latest" \
+      version="develop" \
       maintainer="joost@abuse.io"
 
 # Variables mysql
@@ -62,9 +72,17 @@ RUN echo "mysql-server mysql-server/root_password_again password ${MYSQL_ROOT_PA
 
 # Update system and install dependencies
 RUN apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install curl fetchmail mysql-server mysql-client php php-pear php-dev \
-    php-mcrypt php-mysql php-pgsql php-curl php-intl php-bcmath php-cli php-cgi php-fpm php-mbstring php-zip \
-    procmail nginx rsyslog supervisor -y
+    DEBIAN_FRONTEND=noninteractive apt-get install -y gcc make autoconf libc-dev \
+    pkg-config nginx beanstalkd mysql-server mysql-client php-cli php-curl php-mysql \
+    php-pear php-pgsql php-intl php-bcmath php-mbstring php-fpm php-zip php-dev \
+    libmcrypt-dev git re2c unzip fetchmail supervisor rsyslog curl
+
+# install php-mcrypt
+RUN pecl install mcrypt-1.0.1
+RUN echo "extension=mcrypt.so" > /etc/php/7.2/mods-available/mcrypt.ini
+
+# install php-mail-mimedecode
+RUN pear install Mail_mimeDecode
 
 # create directories
 RUN mkdir -p \
@@ -142,15 +160,15 @@ RUN cp /etc/supervisor/supervisord.conf . && \
     supervisord.conf > /etc/supervisor/supervisord.conf
 
 # tweak mbstring
-RUN cp /usr/include/php/20151012/ext/mbstring/libmbfl/mbfl/mbfilter.h . && \
-    awk '/#define MBFL_MBFILTER_H/{print;print "#undef HAVE_MBSTRING\n#define HAVE_MBSTRING 1";next}1' \
-    mbfilter.h > /usr/include/php/20151012/ext/mbstring/libmbfl/mbfl/mbfilter.h
+RUN cp /usr/include/php/20170718/ext/mbstring/libmbfl/mbfl/mbfilter.h . && \
+   awk '/#define MBFL_MBFILTER_H/{print;print "#undef HAVE_MBSTRING\n#define HAVE_MBSTRING 1";next}1' \
+   mbfilter.h > /usr/include/php/20170718/ext/mbstring/libmbfl/mbfl/mbfilter.h
 
 # tweak php-fpm
 RUN sed -i \
-    -e "s/listen = \/run\/php\/php7.0-fpm.sock/listen = 127.0.0.1:9000/g" \
+    -e "s/listen = \/run\/php\/php7.2-fpm.sock/listen = 127.0.0.1:9000/g" \
     -e "s/;clear_env = no/clear_env = no/g" \
-    /etc/php/7.0/fpm/pool.d/www.conf
+    /etc/php/7.2/fpm/pool.d/www.conf
 
 # tweak rsyslog
 RUN sed -i \
@@ -170,12 +188,12 @@ RUN sed -i \
 	echo "[mysqld]\nskip-host-cache\nskip-name-resolve" > /etc/mysql/conf.d/docker.cnf
 
 # install mailparse
-RUN pecl install mailparse-3.0.2 && \
-    echo extension=mailparse.so > /etc/php/7.0/mods-available/mailparse.ini && \
+RUN pecl install mailparse && \
+    echo extension=mailparse.so > /etc/php/7.2/mods-available/mailparse.ini && \
     phpenmod mailparse && phpenmod mcrypt
 
 # install AbuseIO from the intermediate image
-COPY --from=intermediate /tmp/AbuseIO-master /opt/abuseio
+COPY --from=intermediate /tmp/AbuseIO-laravel5_6 /opt/abuseio
 RUN chown -R abuseio:abuseio /opt/abuseio
 
 WORKDIR /opt/abuseio
