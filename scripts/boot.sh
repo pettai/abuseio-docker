@@ -181,7 +181,7 @@ else
     echo "60 Updating System Administrator user" > $PROGRESSFILE
 
     # create admin user
-    php ./artisan user:edit 1 --password=$ABUSEIO_ADMIN_PASSWORD
+    php ./artisan user:create admin@isp.local 1 --first_name=Ad --last_name=Ministrator --password=$ABUSEIO_ADMIN_PASSWORD
     echo $ABUSEIO_ADMIN_PASSWORD > $PASSWORDFILE
 
     # add the admin role to the user
