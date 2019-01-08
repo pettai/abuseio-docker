@@ -14,7 +14,7 @@ RUN if [ "x${GITHUB_TOKEN}" = "x" ]; then \
     fi
 
 RUN apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install curl php php-pear php-dev php-mcrypt php-mysql php-pgsql php-curl \
+    DEBIAN_FRONTEND=noninteractive apt-get install curl re2c php php-pear php-dev php-mcrypt php-mysql php-pgsql php-curl \
     php-intl php-bcmath php-cli php-cgi php-mbstring php-zip unzip wget -y
 
 # tweak mbstring
