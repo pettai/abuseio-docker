@@ -2,7 +2,7 @@
 Standalone image for [AbuseIO 4.2](https://github.com/AbuseIO/AbuseIO) running on NGINX with MySQL, fetchmail and procmail
 
     Here be dragons
-    Warning: this is an unstable release, just for testing purposes, don't use in a production environment
+    Warning: this is an development release, don't use in a production environment
 
 ### to build
 The image uses composer and GitHub to retrieve its dependencies, you'll need to have a GitHub OATH token to retrieve them, you can get a OATH token on your GitHub profile. [GitHub Tokens](https://github.com/settings/tokens).
