@@ -46,17 +46,17 @@ RUN curl -sS https://getcomposer.org/installer | php && \
 RUN composer config -g github-oauth.github.com ${GITHUB_TOKEN}
 
 # get AbuseIO
-RUN wget -O abuseio.zip https://github.com/AbuseIO/AbuseIO/archive/laravel5_6.zip && \
+RUN wget -O abuseio.zip https://github.com/AbuseIO/AbuseIO/archive/master.zip && \
     unzip abuseio.zip -d /tmp
 
 # install dependencies
-WORKDIR /tmp/AbuseIO-laravel5_6
+WORKDIR /tmp/AbuseIO-master
 RUN composer install --no-scripts
 
 # create the final image
 FROM ubuntu:18.04
 
-LABEL description="Docker image for AbuseIO, this image will install the alpha version of AbuseIO 4.1 running on laravel 5.6" \
+LABEL description="Docker image for AbuseIO, this image will install the development version of AbuseIO 4.2" \
       vendor="AbuseIO" \
       product="AbuseIO" \
       version="develop" \
@@ -193,7 +193,7 @@ RUN pecl install mailparse && \
     phpenmod mailparse && phpenmod mcrypt
 
 # install AbuseIO from the intermediate image
-COPY --from=intermediate /tmp/AbuseIO-laravel5_6 /opt/abuseio
+COPY --from=intermediate /tmp/AbuseIO-master /opt/abuseio
 RUN chown -R abuseio:abuseio /opt/abuseio
 
 WORKDIR /opt/abuseio

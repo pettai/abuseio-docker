@@ -1,5 +1,5 @@
 # abuse-docker
-Standalone image for [AbuseIO 4.1](https://github.com/AbuseIO/AbuseIO/tree/4.1) running on NGINX with MySQL, fetchmail and procmail
+Standalone image for [AbuseIO 4.2](https://github.com/AbuseIO/AbuseIO) running on NGINX with MySQL, fetchmail and procmail
 
     Here be dragons
     Warning: this is an unstable release, just for testing purposes, don't use in a production environment
@@ -7,11 +7,11 @@ Standalone image for [AbuseIO 4.1](https://github.com/AbuseIO/AbuseIO/tree/4.1) 
 ### to build
 The image uses composer and GitHub to retrieve its dependencies, you'll need to have a GitHub OATH token to retrieve them, you can get a OATH token on your GitHub profile. [GitHub Tokens](https://github.com/settings/tokens).
 
-    # docker build -t abuseio:4.1 --build-arg GITHUB_TOKEN=<my token> .
+    # docker build -t abuseio:4.2 --build-arg GITHUB_TOKEN=<my token> .
 
 ### to run
 
-    # docker run -d -p 8000:8000 -p 3306:3306 -e "APP_URL=http://localhost:8000" -v <host_config_dir>:/config -v <host_data_dir>:/data -v <host_log_dir>:/log abuseio:4.1
+    # docker run -d -p 8000:8000 -p 3306:3306 -e "APP_URL=http://localhost:8000" -v <host_config_dir>:/config -v <host_data_dir>:/data -v <host_log_dir>:/log abuseio:4.2
     
 and connect your browser to [http://localhost:8000/](http://localhost:8000/)
 
