@@ -1,5 +1,6 @@
 # abuse-docker
-Standalone image for [AbuseIO 4.2](https://github.com/AbuseIO/AbuseIO) running on NGINX with MySQL, fetchmail and procmail
+Docker image for the delegated version of [AbuseIO 4.1](https://github.com/AbuseIO/AbuseIO/tree/4.1) running on NGINX with MySQL
+This image is intended to be used as a delegated AbuseIO instance, it can only receive tickets using the API
 
     Here be dragons
     Warning: this is an development release, don't use in a production environment
@@ -24,19 +25,12 @@ During the first boot of the container, AbuseIO will create an admin account and
 
 The  `/config`  volume,  contains the basic settings for AbuseIO, most of them are set to default values.
 
-Mail settings can be set in `fetchmailrc` \( incoming \) and `abuseio.env` \( outgoing \)  for more information about these file see the links below. When you edit fetchmailrc, don't delete or alter the last line.
-    
-    mda "/usr/bin/procmail -m /etc/procmailrc"
-    
-This line ensures that the mails are delivered to AbuseIO.
-
+Mail settings can be set in `abuseio.env` for more information see the links below.
 
 Others setting for  e.g. parsers, collectors and  find-contact modules can be found in the `/config/abuseio` directory.
 
  - [AbuseIO environment settings](https://docs.abuse.io/en/latest/installation/#environment-settings)
  - [AbuseIO main configuration](https://docs.abuse.io/en/latest/configuration_main/)
- - [Gmail POP3 with fetchmail](https://www.axllent.org/docs/view/gmail-pop3-with-fetchmail/)
- - [Using Fetchmail to Retrieve Email](https://www.linode.com/docs/email/clients/using-fetchmail-to-retrieve-email)
 
 ### ports
 NGINX is accessible on container port 8000 and MySQL is accessible on port 3306. These ports can be published 
@@ -53,7 +47,7 @@ The container exports three volumes
    persistent data: database and mailarchive
 
  - `/log`
-   logging from AbuseIO, NGINX and procmail
+   logging from AbuseIO and NGINX 
    
  
 The volumes can be mapped to local persistent storage, using the -v option of Docker, see [mount volume](https://docs.docker.com/engine/reference/commandline/run/#mount-volume--v---read-only) of the Docker manual for more information

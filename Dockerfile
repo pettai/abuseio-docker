@@ -72,10 +72,9 @@ RUN echo "mysql-server mysql-server/root_password_again password ${MYSQL_ROOT_PA
 
 # Update system and install dependencies
 RUN apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y gcc make autoconf libc-dev \
-    pkg-config nginx beanstalkd mysql-server mysql-client php-cli php-curl php-mysql \
-    php-pear php-pgsql php-intl php-bcmath php-mbstring php-fpm php-zip php-dev \
-    libmcrypt-dev git re2c unzip fetchmail supervisor rsyslog curl
+    php-mcrypt php-mysql php-pgsql php-curl php-intl php-bcmath php-cli php-cgi php-fpm php-mbstring php-zip \
+    DEBIAN_FRONTEND=noninteractive apt-get install curl mysql-server mysql-client php php-pear php-dev \
+    nginx rsyslog supervisor -y
 
 # install php-mcrypt
 RUN pecl install mcrypt-1.0.1
@@ -126,7 +125,6 @@ RUN phpenmod docker-vars
 
 # install rsyslog
 ADD config/rsyslog/48-abuseio.conf /etc/rsyslog.d
-ADD config/rsyslog/46-fetchmail.conf /etc/rsyslog.d
 
 # install supervisor confs
 ADD config/supervisor/docker.conf /etc/supervisor/conf.d
@@ -138,13 +136,6 @@ RUN chmod 755 /scripts/boot.sh
 # install crons
 ADD config/cron/root.cron /tmp
 RUN crontab -u root /tmp/root.cron
-
-# install fetchmailrc
-ADD config/fetchmail/fetchmailrc /etc
-RUN chmod 0600 /etc/fetchmailrc
-
-# install procmailrc
-ADD config/procmail/procmailrc /etc
 
 # switch to /tmp
 WORKDIR /tmp
