@@ -107,10 +107,10 @@ RUN chmod 775 /var/log/abuseio && \
     chown mysql:mysql /var/run/mysqld && \
     chown root:abuseio /log && \
     chmod 775 /data && \
-    chown www-data:www-data /opt/setup
+    chown abuseio:abuseio /opt/setup
 
 # install the setuppage
-USER www-data
+USER abuseio
 COPY setuppage/* /opt/setup/
 USER root
 
@@ -168,6 +168,7 @@ RUN cp /usr/include/php/20170718/ext/mbstring/libmbfl/mbfl/mbfilter.h . && \
 RUN sed -i \
     -e "s/listen = \/run\/php\/php7.2-fpm.sock/listen = 127.0.0.1:9000/g" \
     -e "s/;clear_env = no/clear_env = no/g" \
+    -e "s/www-data/abuseio/g" \
     /etc/php/7.2/fpm/pool.d/www.conf
 
 # tweak rsyslog
