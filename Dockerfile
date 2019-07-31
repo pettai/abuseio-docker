@@ -56,7 +56,7 @@ RUN composer install --no-scripts
 # create the final image
 FROM ubuntu:18.04
 
-LABEL description="Docker image for AbuseIO, this image will install the development version of AbuseIO 4.2" \
+LABEL description="Docker image for AbuseIO, this image will install the development version of an delegated AbuseIO 4.2" \
       vendor="AbuseIO" \
       product="AbuseIO" \
       version="develop" \
@@ -72,9 +72,9 @@ RUN echo "mysql-server mysql-server/root_password_again password ${MYSQL_ROOT_PA
 
 # Update system and install dependencies
 RUN apt-get update && \
-    php-mcrypt php-mysql php-pgsql php-curl php-intl php-bcmath php-cli php-cgi php-fpm php-mbstring php-zip \
     DEBIAN_FRONTEND=noninteractive apt-get install curl mysql-server mysql-client php php-pear php-dev \
-    nginx rsyslog supervisor -y
+    php-mysql php-pgsql php-curl php-intl php-bcmath php-cli php-cgi php-fpm php-mbstring php-zip \
+    nginx rsyslog supervisor libmcrypt-dev re2c -y
 
 # install php-mcrypt
 RUN pecl install mcrypt-1.0.1
@@ -106,10 +106,10 @@ RUN chmod 775 /var/log/abuseio && \
     chown mysql:mysql /var/run/mysqld && \
     chown root:abuseio /log && \
     chmod 775 /data && \
-    chown www-data:www-data /opt/setup
+    chown abuseio:abuseio /opt/setup
 
 # install the setuppage
-USER www-data
+USER abuseio
 COPY setuppage/* /opt/setup/
 USER root
 
@@ -159,6 +159,7 @@ RUN cp /usr/include/php/20170718/ext/mbstring/libmbfl/mbfl/mbfilter.h . && \
 RUN sed -i \
     -e "s/listen = \/run\/php\/php7.2-fpm.sock/listen = 127.0.0.1:9000/g" \
     -e "s/;clear_env = no/clear_env = no/g" \
+    -e "s/www-data/abuseio/g" \
     /etc/php/7.2/fpm/pool.d/www.conf
 
 # tweak rsyslog
