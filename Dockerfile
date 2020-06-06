@@ -17,7 +17,7 @@ RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y gcc make autoconf libc-dev \
     pkg-config php-cli php-curl php-mysql \
     php-pear php-pgsql php-intl php-bcmath php-mbstring php-zip php-dev \
-    libmcrypt-dev git re2c unzip wget curl procmail
+    libmcrypt-dev git re2c unzip wget curl
 
 
 # install php-mcrypt
@@ -75,7 +75,7 @@ RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y gcc make autoconf libc-dev \
     pkg-config nginx beanstalkd mysql-server mysql-client php-cli php-curl php-mysql \
     php-pear php-pgsql php-intl php-bcmath php-mbstring php-fpm php-zip php-dev \
-    libmcrypt-dev git re2c unzip fetchmail supervisor rsyslog curl
+    libmcrypt-dev git re2c unzip fetchmail supervisor rsyslog curl procmail
 
 # install php-mcrypt
 RUN pecl install mcrypt-1.0.1
