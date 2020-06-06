@@ -17,7 +17,7 @@ RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y gcc make autoconf libc-dev \
     pkg-config php-cli php-curl php-mysql \
     php-pear php-pgsql php-intl php-bcmath php-mbstring php-zip php-dev \
-    libmcrypt-dev git re2c unzip wget curl
+    libmcrypt-dev git re2c unzip wget curl procmail
 
 
 # install php-mcrypt
