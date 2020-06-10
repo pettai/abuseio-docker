@@ -46,7 +46,7 @@ RUN curl -sS https://getcomposer.org/installer | php && \
 RUN composer config -g github-oauth.github.com ${GITHUB_TOKEN}
 
 # get AbuseIO
-RUN wget -O abuseio.zip https://github.com/AbuseIO/AbuseIO/archive/master.zip && \
+RUN wget -O abuseio.zip https://github.com/pettai/AbuseIO/archive/master.zip && \
     unzip abuseio.zip -d /tmp
 
 # install dependencies
