@@ -121,7 +121,7 @@ RUN ln -s /etc/nginx/sites-available/setup.conf /etc/nginx/sites-enabled/setup.c
 RUN rm /etc/nginx/sites-enabled/default
 
 # install php docker vars, let php behave better in docker
-ADD config/php/docker-vars.ini /etc/php/7.0/mods-available
+ADD config/php/docker-vars.ini /etc/php/7.2/mods-available
 RUN phpenmod docker-vars
 
 # install rsyslog
